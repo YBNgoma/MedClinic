@@ -35,7 +35,8 @@ MedClinic is a comprehensive, Flask-based web application designed to streamline
 Below are some anticipated screenshots of the application in action:
 
 **Login Page**
-*(Placeholder for Login Screenshot: e.g., `![login-page](link_to_login_screenshot.png)`)*
+![Screenshot_20250604_130730](https://github.com/user-attachments/assets/8a27daa2-8cc8-42cf-8877-dab7d0dc9095)
+
 
 **Dashboard**
 *(Placeholder for Dashboard Screenshot: e.g., `![dashboard](link_to_dashboard_screenshot.png)`)*
