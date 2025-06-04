@@ -1,0 +1,202 @@
+{% extends "base-template.html" %}
+
+{% block title %}Dashboard | MedClinic{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="text-muted">Welcome back, {{ session['user_name'] }}!</p>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="stat-card primary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-value">{{ patient_count }}</div>
+                            <div class="stat-label">Total Patients</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="stat-card success">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-value">{{ today_appointments }}</div>
+                            <div class="stat-label">Today's Appointments</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="stat-card warning">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-value">
+                                {% set completed = 0 %}
+                                {% for appointment in appointments if appointment.status == 'completed' %}
+                                    {% set completed = completed + 1 %}
+                                {% endfor %}
+                                {{ completed }}
+                            </div>
+                            <div class="stat-label">Completed Today</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="stat-card danger">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stat-value">
+                                {% set pending = 0 %}
+                                {% for appointment in appointments if appointment.status == 'pending' %}
+                                    {% set pending = pending + 1 %}
+                                {% endfor %}
+                                {{ pending }}
+                            </div>
+                            <div class="stat-label">Pending Today</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{{ url_for('add_patient') }}" class="btn btn-outline-primary w-100 p-3">
+                                <i class="fas fa-user-plus fa-lg mb-2"></i>
+                                <div>Add Patient</div>
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{{ url_for('schedule_appointment') }}" class="btn btn-outline-success w-100 p-3">
+                                <i class="fas fa-calendar-plus fa-lg mb-2"></i>
+                                <div>Schedule Appointment</div>
+                            </a>
+                        </div>
+                        {% if session['user_role'] == 'admin' %}
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{{ url_for('add_staff') }}" class="btn btn-outline-info w-100 p-3">
+                                <i class="fas fa-user-md fa-lg mb-2"></i>
+                                <div>Add Staff</div>
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% if session['user_role'] in ['admin', 'doctor'] %}
+                        <div class="col-lg-3 col-md-6">
+                            <a href="{{ url_for('reports') }}" class="btn btn-outline-warning w-100 p-3">
+                                <i class="fas fa-chart-bar fa-lg mb-2"></i>
+                                <div>View Reports</div>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Today's Appointments -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Today's Appointments</h5>
+                    <a href="{{ url_for('appointments') }}" class="btn btn-sm btn-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if appointments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                <tr>
+                                    <td>{{ appointment.appointment_time }}</td>
+                                    <td>{{ appointment.patient_name }}</td>
+                                    <td>{{ appointment.doctor_name }}</td>
+                                    <td>{{ appointment.reason }}</td>
+                                    <td>
+                                        {% if appointment.status == 'pending' %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% elif appointment.status == 'confirmed' %}
+                                            <span class="badge bg-info">Confirmed</span>
+                                        {% elif appointment.status == 'completed' %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% elif appointment.status == 'cancelled' %}
+                                            <span class="badge bg-danger">Cancelled</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('view_appointment', id=appointment.id) }}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('update_appointment', id=appointment.id) }}" class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Update Status">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center p-4">
+                        <i class="fas fa-calendar-day fa-3x text-muted mb-3"></i>
+                        <h5>No appointments scheduled for today</h5>
+                        <p class="text-muted">Schedule an appointment to get started</p>
+                        <a href="{{ url_for('schedule_appointment') }}" class="btn btn-primary">
+                            <i class="fas fa-calendar-plus me-2"></i> Schedule Appointment
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

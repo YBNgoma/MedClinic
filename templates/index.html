@@ -1,0 +1,73 @@
+{% extends "base-template.html" %}
+
+{% block title %}Welcome to MedClinic{% endblock %}
+
+{% block auth %}
+<div class="login-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mx-auto text-center text-white mb-5">
+                <h1 class="display-4 mb-3"><i class="fas fa-hospital me-3"></i>MedClinic</h1>
+                <p class="lead">A comprehensive clinic management system for healthcare professionals</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 d-flex align-items-center">
+                <div class="text-white p-4">
+                    <h2 class="mb-4">Simplify Your Clinic Management</h2>
+                    <div class="d-flex mb-4">
+                        <div class="me-3">
+                            <i class="fas fa-user-md fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Staff Management</h5>
+                            <p>Efficiently manage doctors, nurses, and administrative staff</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-4">
+                        <div class="me-3">
+                            <i class="fas fa-calendar-check fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Appointment Scheduling</h5>
+                            <p>Easily schedule and manage patient appointments</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-4">
+                        <div class="me-3">
+                            <i class="fas fa-notes-medical fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Medical Records</h5>
+                            <p>Securely store and access patient medical information</p>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-chart-line fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Reporting & Analytics</h5>
+                            <p>Generate insights with comprehensive reporting tools</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="login-form">
+                    <h3 class="text-center mb-4">Get Started</h3>
+                    <div class="d-grid gap-3">
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i> Login
+                        </a>
+                        <p class="text-center mt-3">
+                            New to MedClinic? <br>
+                            Contact your administrator to create an account.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

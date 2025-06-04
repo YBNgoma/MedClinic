@@ -1,0 +1,208 @@
+{% extends 'base-template.html' %}
+
+{% block title %}Patient Reports - Clinic Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('reports') }}">Reports</a></li>
+            <li class="breadcrumb-item active">Patient Reports</li>
+        </ol>
+    </nav>
+
+    <h1 class="page-title"><i class="fas fa-users"></i> Patient Demographics</h1>
+    
+    <div class="row">
+        <!-- Gender Distribution Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Gender Distribution</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="window.print()">
+                        <i class="fas fa-print me-1"></i> Print
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div id="gender-chart" style="height: 250px; display: flex; align-items: center; justify-content: center;">
+                                <canvas id="genderChart" width="200" height="200"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="table-responsive">
+                                <table class="table table-bordered mt-3">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Gender</th>
+                                            <th>Count</th>
+                                            <th>Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% set total = namespace(value=0) %}
+                                        {% for item in gender_counts %}
+                                            {% set total.value = total.value + item.count %}
+                                        {% endfor %}
+                                        
+                                        {% for item in gender_counts %}
+                                        <tr>
+                                            <td>{{ item.gender|title }}</td>
+                                            <td>{{ item.count }}</td>
+                                            <td>{{ ((item.count / total.value) * 100)|round(1) }}%</td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="table-light">
+                                            <td><strong>Total</strong></td>
+                                            <td><strong>{{ total.value }}</strong></td>
+                                            <td><strong>100%</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- New Patient Registration Trends -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">New Patient Registration (Current Year)</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="window.print()">
+                        <i class="fas fa-print me-1"></i> Print
+                    </button>
+                </div>
+                <div class="card-body">
+                    <canvas id="registrationChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Additional Information -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Patient Information Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        This dashboard provides basic patient demographic information. More detailed reports including age distribution, geographical distribution, and medical condition statistics will be available in future updates.
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6>Available Reports:</h6>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Gender Distribution
+                                <span class="badge bg-success rounded-pill">Available</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                New Patient Registration Trends
+                                <span class="badge bg-success rounded-pill">Available</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Age Distribution
+                                <span class="badge bg-warning rounded-pill">Coming Soon</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Geographic Distribution
+                                <span class="badge bg-warning rounded-pill">Coming Soon</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Medical Condition Statistics
+                                <span class="badge bg-warning rounded-pill">Coming Soon</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gender Distribution Chart
+        const genderCtx = document.getElementById('genderChart').getContext('2d');
+        
+        const genderData = {
+            labels: [
+                {% for item in gender_counts %}
+                '{{ item.gender|title }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                data: [
+                    {% for item in gender_counts %}
+                    {{ item.count }},
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    '#3498db',
+                    '#e74c3c',
+                    '#2ecc71',
+                    '#f39c12',
+                    '#9b59b6'
+                ]
+            }]
+        };
+        
+        const genderChart = new Chart(genderCtx, {
+            type: 'pie',
+            data: genderData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        
+        // New Patient Registration Chart
+        const regCtx = document.getElementById('registrationChart').getContext('2d');
+        
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const monthData = Array(12).fill(0);
+        
+        {% for item in new_patients %}
+            monthData[parseInt({{ item.month }}) - 1] = {{ item.count }};
+        {% endfor %}
+        
+        const registrationChart = new Chart(regCtx, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'New Patients',
+                    data: monthData,
+                    backgroundColor: '#3498db',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        precision: 0
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

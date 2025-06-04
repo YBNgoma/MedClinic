@@ -1,0 +1,89 @@
+{% extends 'base-template.html' %}
+
+{% block title %}Reports - Clinic Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="page-title"><i class="fas fa-chart-bar"></i> Reports</h1>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Appointment Reports</h5>
+                    <a href="{{ url_for('appointment_reports') }}" class="btn btn-sm btn-primary">View Details</a>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-check fa-4x text-primary mb-3"></i>
+                        <h4>Appointment Analysis</h4>
+                        <p class="text-muted">View detailed reports on appointments by date, status, and doctor.</p>
+                    </div>
+                    <div class="d-grid">
+                        <a href="{{ url_for('appointment_reports') }}" class="btn btn-outline-primary">Generate Report</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Patient Reports</h5>
+                    <a href="{{ url_for('patient_reports') }}" class="btn btn-sm btn-primary">View Details</a>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <i class="fas fa-users fa-4x text-success mb-3"></i>
+                        <h4>Patient Demographics</h4>
+                        <p class="text-muted">View patient statistics, demographics, and registration trends.</p>
+                    </div>
+                    <div class="d-grid">
+                        <a href="{{ url_for('patient_reports') }}" class="btn btn-outline-success" disabled>Generate Report</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if session['user_role'] == 'admin' %}
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Staff Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <i class="fas fa-user-md fa-4x text-info mb-3"></i>
+                        <h4>Staff Performance</h4>
+                        <p class="text-muted">Staff performance metrics and activity logs are coming soon.</p>
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-outline-secondary" disabled>Coming Soon</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Financial Reports</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <i class="fas fa-chart-line fa-4x text-warning mb-3"></i>
+                        <h4>Revenue Analysis</h4>
+                        <p class="text-muted">Financial reports and billing analysis are coming soon.</p>
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-outline-secondary" disabled>Coming Soon</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

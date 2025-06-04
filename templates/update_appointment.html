@@ -1,0 +1,104 @@
+{% extends 'base-template.html' %}
+{% block title %}Update Appointment{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="page-title">
+                <i class="fas fa-edit me-2"></i> Update Appointment
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 col-lg-6 mx-auto">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Appointment for {{ appointment.patient_name }}</h5>
+                    <span class="badge {% if appointment.status == 'scheduled' %}bg-info
+                          {% elif appointment.status == 'confirmed' %}bg-primary
+                          {% elif appointment.status == 'completed' %}bg-success
+                          {% elif appointment.status == 'cancelled' %}bg-danger
+                          {% elif appointment.status == 'no-show' %}bg-warning
+                          {% endif %}">
+                        {{ appointment.status|capitalize }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" name="patient_id" value="{{ appointment.patient_id }}">
+                        
+                        <div class="mb-3">
+                            <label for="doctor_id" class="form-label">Doctor</label>
+                            <select class="form-select" id="doctor_id" name="doctor_id" required>
+                                <option value="">Select Doctor</option>
+                                {% for doctor in doctors %}
+                                <option value="{{ doctor.id }}" {% if doctor.id == appointment.doctor_id %}selected{% endif %}>
+                                    {{ doctor.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="appointment_date" class="form-label">Appointment Date</label>
+                                <input type="date" class="form-control" id="appointment_date" name="appointment_date" value="{{ appointment.appointment_date }}" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="appointment_time" class="form-label">Appointment Time</label>
+                                <input type="time" class="form-control" id="appointment_time" name="appointment_time" value="{{ appointment.appointment_time }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="scheduled" {% if appointment.status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+                                <option value="confirmed" {% if appointment.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="completed" {% if appointment.status == 'completed' %}selected{% endif %}>Completed</option>
+                                <option value="cancelled" {% if appointment.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                <option value="no-show" {% if appointment.status == 'no-show' %}selected{% endif %}>No Show</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason for Visit</label>
+                            <input type="text" class="form-control" id="reason" name="reason" value="{{ appointment.reason }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Additional Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3">{{ appointment.notes }}</textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('view_appointment', id=appointment.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i> Update Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    // Check if there's a status parameter in the URL
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const statusParam = urlParams.get('status');
+        
+        if (statusParam) {
+            const statusSelect = document.getElementById('status');
+            statusSelect.value = statusParam;
+        }
+    });
+</script>
+{% endblock %}

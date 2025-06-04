@@ -1,0 +1,113 @@
+{% extends "base-template.html" %}
+
+{% block title %}Patients | MedClinic{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">Patients</h1>
+        <a href="{{ url_for('add_patient') }}" class="btn btn-primary">
+            <i class="fas fa-user-plus me-2"></i> Add New Patient
+        </a>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="{{ url_for('patients') }}" method="GET">
+                <div class="row g-3">
+                    <div class="col-lg-10">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" name="search" placeholder="Search by name, phone or email..." value="{{ search }}">
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Patients List -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Patient Directory</h5>
+            <span class="badge bg-primary">{{ patients|length }} Patients</span>
+        </div>
+        <div class="card-body">
+            {% if patients %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>Age</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Blood Type</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patients %}
+                        <tr>
+                            <td>{{ patient.name }}</td>
+                            <td>{{ patient.gender }}</td>
+                            <td>
+                                {% set age = ((now - patient.dob|string|strptime('%Y-%m-%d'))|string|int / 31536000)|int %}
+                                {{ age }} yrs
+                            </td>
+                            <td>{{ patient.phone }}</td>
+                            <td>{{ patient.email }}</td>
+                            <td>
+                                {% if patient.blood_type %}
+                                    <span class="badge bg-danger">{{ patient.blood_type }}</span>
+                                {% else %}
+                                    <span class="text-muted">Not specified</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('view_patient', id=patient.id) }}" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('edit_patient', id=patient.id) }}" class="btn btn-sm btn-outline-warning me-1" data-bs-toggle="tooltip" title="Edit Patient">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center p-5">
+                <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                <h5>No patients found</h5>
+                <p class="text-muted">
+                    {% if search %}
+                        No patients matching "{{ search }}"
+                    {% else %}
+                        Add your first patient to get started
+                    {% endif %}
+                </p>
+                {% if search %}
+                    <a href="{{ url_for('patients') }}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-times me-1"></i> Clear Search
+                    </a>
+                {% endif %}
+                <a href="{{ url_for('add_patient') }}" class="btn btn-primary">
+                    <i class="fas fa-user-plus me-2"></i> Add New Patient
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Clinic Management System{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --text-color: #2c3e50;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            background-color: #f5f7f9;
+        }
+        
+        .sidebar {
+            background-color: var(--dark-bg);
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding-top: 20px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar .logo {
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin: 5px 15px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            background-color: white;
+        }
+        
+        .table thead {
+            background-color: var(--light-bg);
+        }
+        
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .page-title {
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .stat-card {
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            height: 100%;
+        }
+        
+        .stat-card.primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .stat-card.success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .stat-card.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        
+        .stat-card.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .stat-card .stat-icon {
+            font-size: 48px;
+            opacity: 0.6;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .stat-card .stat-label {
+            font-weight: 300;
+            margin-top: 5px;
+        }
+        
+        .login-page {
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-form {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -250px;
+            }
+            
+            .sidebar.active {
+                margin-left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .main-content.active {
+                margin-left: 250px;
+            }
+            
+            .toggle-sidebar {
+                display: block !important;
+            }
+        }
+        
+        /* Alert styling */
+        .alert {
+            border-radius: 10px;
+        }
+        
+        /* Form styling */
+        .form-control, .form-select {
+            border-radius: 7px;
+            padding: 10px;
+            border: 1px solid #e1e5eb;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Badge styling */
+        .badge.bg-success {
+            background-color: var(--secondary-color) !important;
+        }
+        
+        .badge.bg-warning {
+            background-color: #f39c12 !important;
+        }
+        
+        .badge.bg-danger {
+            background-color: var(--accent-color) !important;
+        }
+        
+        .badge.bg-info {
+            background-color: #3498db !important;
+        }
+        
+        /* Modal styling */
+        .modal-content {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        /* Print styles */
+        @media print {
+            .sidebar, .navbar, .no-print {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 0;
+            }
+            
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    {% if 'user_id' in session %}
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <h4><i class="fas fa-hospital"></i> MedClinic</h4>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == '/dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if '/patients' in request.path %}active{% endif %}" href="{{ url_for('patients') }}">
+                    <i class="fas fa-users"></i> Patients
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if '/appointments' in request.path %}active{% endif %}" href="{{ url_for('appointments') }}">
+                    <i class="fas fa-calendar-check"></i> Appointments
+                </a>
+            </li>
+            {% if session['user_role'] in ['admin', 'doctor'] %}
+            <li class="nav-item">
+                <a class="nav-link {% if '/reports' in request.path %}active{% endif %}" href="{{ url_for('reports') }}">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </a>
+            </li>
+            {% endif %}
+            {% if session['user_role'] == 'admin' %}
+            <li class="nav-item">
+                <a class="nav-link {% if '/staff' in request.path %}active{% endif %}" href="{{ url_for('staff') }}">
+                    <i class="fas fa-user-md"></i> Staff
+                </a>
+            </li>
+            {% endif %}
+            <li class="nav-item mt-5">
+                <a class="nav-link {% if request.path == '/profile' %}active{% endif %}" href="{{ url_for('profile') }}">
+                    <i class="fas fa-user-circle"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light mb-4">
+            <div class="container-fluid">
+                <button id="sidebarToggle" class="btn btn-light d-block d-md-none toggle-sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="ms-auto d-flex align-items-center">
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> {{ session['user_name'] }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}"><i class="fas fa-user-cog me-2"></i>Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+    </div>
+    {% else %}
+        {% block auth %}{% endblock %}
+        
+        <!-- Flash Messages for Auth Pages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
+                    {% for category, message in messages %}
+                        <div class="toast show alert-{{ category }}" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header">
+                                <strong class="me-auto">MedClinic</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">
+                                {{ message }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Toggle sidebar on mobile
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    document.querySelector('.sidebar').classList.toggle('active');
+                    document.querySelector('.main-content').classList.toggle('active');
+                });
+            }
+            
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+            
+            // Auto-hide alerts after 5 seconds
+            setTimeout(function() {
+                document.querySelectorAll('.alert').forEach(function(alert) {
+                    var bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>
